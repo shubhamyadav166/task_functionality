@@ -1,64 +1,78 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
+import './App.css'
 
 function App() {
-    const [taskArr, setTaskArr] = useState([{ task: "No task", id: uuidv4() }])
-    const [task, setTask] = useState("")
-    const handleChange = (event) => {
-        setTask(event.target.value)
-    }
-    const handleClick = () => {
-        setTaskArr([...taskArr, { task: task, id: uuidv4() }])
-        setTask("")
-    }
-    const DeleteTodo = (id) => {
-        // console.log(id);
-        let filter = taskArr.filter((todo) => todo.id !== id)
-        setTaskArr(filter)
-        // console.log(filter);
-    }
-    let toUpperCase = () => {
-        setTaskArr(taskArr.map((todo) => {
-            return { ...task, task: todo.task.toUpperCase(), id: todo.id }
-        }))
-        // console.log(result);
-    }
-    let UpeerCaseOne = (id) => {
-        setTaskArr(taskArr.map((todo) => {
-            if (todo.id === id) {
-                return { ...task, task: todo.task.toUpperCase(), id: id }
-            } else {
-                return todo;
-            }
-        }))
-        // console.log(result);
-    }
+  const [todo, setTodo] = useState([{ task: "No Task", id: uuidv4(), complete: false }])
+  const [newTask, setnewTask] = useState("")
 
-    return (
-        <div>
-            <input type="text" value={task} onChange={handleChange} />
-            <br />
-            <button onClick={handleClick}>Add task</button>
-            <br /><br />
+  // console.log(task);
+  const handleChange = (event) => {
+    setnewTask(event.target.value)
+    console.log(newTask);
 
-            <h2>list of added task</h2>
-            {
-                taskArr.map((todo) => (
+  }
+  /////////////add todo
+  const handleClick = () => {
+    setTodo([...todo, { task: newTask, id: uuidv4(), complete: false }])
+    setnewTask("")
+  }
 
-                    <li key={todo.id}>{todo.task}
-                        &nbsp;&nbsp;&nbsp;
-                        <button onClick={() => DeleteTodo(todo.id)}>Delete</button>
-                        &nbsp;&nbsp;
-                        <button onClick={() => UpeerCaseOne(todo.id)}>Upper Case </button>
-                        <hr />
-                    </li>
-                )
-                )
-            }
-            <button onClick={() => toUpperCase()}>To Upper Case</button>
-        </div>
+  const TodoDelete = ((id) => {
+    let filter = todo.filter((arr) => arr.id !== id)
+    setTodo(filter)
+  })
+
+  const upperCase = ((id) => {
+    setTodo(todo.map((arr1) => {
+      if (arr1.id === id) {
+        return { task: arr1.task.toUpperCase(), id: id }
+      } else { return arr1 }
+    }))
+  })
+
+  const alluppercase = (() => {
+    setTodo(todo.map((arr) => {
+      return { task: arr.task.toUpperCase(), id: arr.id }
+    })
     )
+  })
+
+  //////////mark as done or not done
+
+  const toggleTodo = (id) => {
+    setTodo(
+      todo.map((todo) =>
+        todo.id === id ? { ...todo, id, complete: !todo.complete } : todo
+      )
+    );
+  };
+
+
+  return (
+    <>
+      <div>
+        <h1>add task</h1>
+        <input type="text" value={newTask} onChange={handleChange} placeholder='Enter task' />&nbsp;&nbsp;&nbsp;
+        <button onClick={handleClick}>add task</button>
+      </div>
+      {todo.map((todo) => (
+        <li key={todo.id}>
+          <span style={{ textDecoration: todo.complete ? "line-through" : "none" }}> {todo.task} </span>
+          &nbsp;&nbsp;
+          <button onClick={() => TodoDelete(todo.id)}>Delete</button>
+          <button onClick={() => upperCase(todo.id)}>To UpperCase</button>
+          <button onClick={() => toggleTodo(todo.id)}>
+            completed
+          </button>
+          <br />
+        </li>
+      )
+
+      )}
+      <button onClick={alluppercase}>all upper case</button>
+    </>
+  )
 }
 
 export default App
-
